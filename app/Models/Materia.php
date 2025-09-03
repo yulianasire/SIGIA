@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Materia extends Model
 {
+    use HasFactory;
     protected $fillable = ['nombre', 
     'carrera_id'];
 
