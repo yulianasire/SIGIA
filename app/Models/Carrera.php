@@ -4,8 +4,17 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Carrera extends Model
 {
-    protected $fillable = ['nombre'];
+    use HasFactory;
+    protected $fillable = ['nombre',];
+
+
+public function materias(): HasMany
+{
+    return $this->hasMany(Materia::class);
 }
+}
+

@@ -16,7 +16,11 @@ class CarreraController extends Controller
     {
         $carreras = Carrera::all();
         return response()->json($carreras);
-        
+    }
+
+    public function showConMaterias()
+    {
+        return Carrera::with('materias')->get();
     }
 
     /**
@@ -37,7 +41,8 @@ class CarreraController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $carrera = Carrera::create($request->all());
+        return response()->json($carrera, 201);
     }
 
     /**
@@ -69,9 +74,13 @@ class CarreraController extends Controller
      * @param  \App\Models\Carrera  $carrera
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Carrera $carrera)
+    public function update(Request $request, $id)
     {
-        //
+        $myCarrera = Carrera::find($id);
+        $myCarrera->nombre = $request->nombre;
+        $myCarrera->save();
+
+        return response()->json($myCarrera, 200);
     }
 
     /**
@@ -80,8 +89,10 @@ class CarreraController extends Controller
      * @param  \App\Models\Carrera  $carrera
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Carrera $carrera)
+    public function destroy($id)
     {
-        //
+        $myCarrera = Carrera::destroy($id);
+
+        return response()->json($myCarrera, 200);
     }
 }

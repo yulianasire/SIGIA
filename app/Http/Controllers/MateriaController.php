@@ -14,7 +14,7 @@ class MateriaController extends Controller
      */
     public function index()
     {
-        $materias = Materia::all();
+        $materias = Materia::with('carrera')->get();
         return response()->json($materias);
     }
 
@@ -36,7 +36,8 @@ class MateriaController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $materia = Materia::create($request->all());
+        return response()->json($materia, 201);
     }
 
     /**
@@ -68,9 +69,15 @@ class MateriaController extends Controller
      * @param  \App\Models\Materia  $materia
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Materia $materia)
+    public function update(Request $request, $id)
     {
-        //
+        
+        $myMateria = Materia::find($id);
+        $myMateria->nombre = $request->nombre;
+        $myMateria->carrera_id = $request->carrera_id;  
+        $myMateria->save();
+
+        return response()->json($myMateria, 200);
     }
 
     /**
@@ -79,8 +86,9 @@ class MateriaController extends Controller
      * @param  \App\Models\Materia  $materia
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Materia $materia)
+    public function destroy($id)
     {
-        //
+        $myMateria = Materia::destroy($id);
+        return response()->json($myMateria, 204);
     }
 }
