@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Carrera;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 
 class CarreraController extends Controller
 {
@@ -41,8 +42,35 @@ class CarreraController extends Controller
      */
     public function store(Request $request)
     {
-        $carrera = Carrera::create($request->all());
-        return response()->json($carrera, 201);
+        try{
+             $request->validate([
+                'nombre' => 'required|string|max:200|mix:10',
+            ]);
+            $myCarrera = new Carrera;
+            $myCarrera->nombre = $request->nombre;
+            $myCarrera->save();
+
+             return response()->json([
+                'message' => 'Carrera creada correctamente',
+                'data' => $myCarrera
+            ])->setStatusCode(201);
+
+        } catch (ValidationException $e) {
+            // Manejar la excepción de validación
+            return response()->json([
+                'message' => 'Datos enviados no válidos',
+                'errors' => $e->validator->errors()
+            ], 400); // Código de estado 422 para errores de validación
+
+        } catch (\Exception $e){
+            return response()->json([
+                'message' => 'Error al crear la carrera',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+            
+        // $carrera = Carrera::create($request->all());
+        // return response()->json($carrera, 201);
     }
 
     /**
