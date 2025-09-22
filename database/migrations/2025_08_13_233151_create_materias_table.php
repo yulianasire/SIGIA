@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::create('materias', function (Blueprint $table) {
-            $table->id();
+            $table->id('matId');
             $table->string('nombre')->unique();
             $table->foreignId('carrera_id')->constrained()->onDelete('cascade');
             $table->timestamps();

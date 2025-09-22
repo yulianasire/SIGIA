@@ -1,8 +1,9 @@
 <?php
 
+use App\Http\Controllers\AsistenciaController;
 use App\Http\Controllers\CarreraController;
+use App\Http\Controllers\InscripcionController;
 use App\Http\Controllers\MateriaController;
-use App\Models\Materia;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -23,3 +24,7 @@ Route::get('/materias', [MateriaController::class, 'index']);
 Route::post('/materias', [MateriaController::class, 'store']);
 Route::put('/materias/{id}', [MateriaController::class, 'update']);
 Route::delete('/materias/{id}', [MateriaController::class, 'destroy']);
+
+Route::apiResource('inscripciones', InscripcionController::class);
+
+Route::apiResource('asistencias', AsistenciaController::class);
