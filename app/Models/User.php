@@ -7,10 +7,15 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, HasRoles;
+
+     protected $primaryKey = 'usId'; // asegúrate de que la PK sea correcta
+    public $incrementing = true;
+    protected $keyType = 'int';
 
 
     protected $fillable = [
@@ -22,13 +27,8 @@ class User extends Authenticatable
         'usTelefono',
         'usDomicilio',
         'usLocalidad',
-        'idRol',
     ];
 
-
-    public function rol(){
-        return $this->belongsTo(Rol::class, 'idRol');
-    }
     public function inscripciones(){
         return $this->hasMany(Inscripcion::class, 'idEstudiante');
     }
@@ -41,7 +41,7 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $hidden = [
-        'password',
+        'usPassword',
         'remember_token',
     ];
 
@@ -53,4 +53,9 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+     // ⚠️ Importante: sobreescribir para que Auth use usPassword
+    public function getAuthPassword()
+    {
+        return $this->usPassword;
+    }
 }
