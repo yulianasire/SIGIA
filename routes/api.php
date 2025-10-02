@@ -22,6 +22,9 @@ Route::middleware('auth:sanctum')->group(function () {
      Route::get('/user', function (Request $request) {
         return $request->user();
     });
+
+    
+
     Route::post('/logout', [AuthController::class, 'logout']);
      // Carrera Routes
     Route::middleware('role:administrador')->group(function () {
@@ -32,6 +35,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('materias', [MateriaController::class, 'store']);
         Route::put('materias/{id}', [MateriaController::class, 'update']);
         Route::delete('materias/{id}', [MateriaController::class, 'destroy']);
+        Route::get('/carrerasConMaterias', [CarreraController::class, 'showConMaterias']);
     });
 
     Route::middleware('role:administrador|profesor|estudiante')->group(function () {
@@ -45,7 +49,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('materias', [MateriaController::class, 'index']);
         
     });
-
+ 
 });
 
 
@@ -56,7 +60,7 @@ Route::middleware('auth:sanctum')->group(function () {
 // Route::put('/carreras/{id}', [CarreraController::class, 'update']);
 // Route::delete('/carreras/{id}', [CarreraController::class, 'destroy']);
 
-// Route::get('/carrerasConMaterias', [CarreraController::class, 'showConMaterias']);
+
 // Route::apiResource('/carreras', CarreraController::class);
 
 // Route::get('/materias', [MateriaController::class, 'index']);

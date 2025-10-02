@@ -14,7 +14,7 @@ return [
     */
 
     'defaults' => [
-        'guard' => 'api',
+        'guard' => 'web',
         'passwords' => 'users',
     ],
 
@@ -35,12 +35,18 @@ return [
     |
     */
 
-    'guards' => [
+       'guards' => [
+        'web' => [
+            'driver' => 'session',   // sesiones normales
+            'provider' => 'users',
+        ],
+
         'api' => [
-            'driver' => 'session',
+            'driver' => 'sanctum',   // 👈 para tokens API
             'provider' => 'users',
         ],
     ],
+
 
     /*
     |--------------------------------------------------------------------------
@@ -60,10 +66,11 @@ return [
     */
 
     'providers' => [
-        'users' => [
-            'driver' => 'eloquent',
-            'model' => App\Models\User::class,
-        ],
+    'users' => [
+        'driver' => 'eloquent',
+        'model' => App\Models\User::class,
+    ],
+
 
         // 'users' => [
         //     'driver' => 'database',
