@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Inscripcion;
+use Dotenv\Exception\ValidationException;
 use Illuminate\Http\Request;
 
 class InscripcionController extends Controller
@@ -14,7 +15,18 @@ class InscripcionController extends Controller
      */
     public function index()
     {
-        return Inscripcion::with(['estudiante', 'materia'])->get();
+        try{
+            $inscripciones = Inscripcion::all();
+            return response()->json([
+                'message' => 'Inscripciones obtenidas correctamente',
+                'data' => $inscripciones
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error al obtener las inscripciones',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
@@ -35,11 +47,36 @@ class InscripcionController extends Controller
      */
     public function store(Request $request)
     {
-        $data = $request->validate([
-            'user_id' => 'required|exists:users,id',
-            'materia_id' => 'required|exists:materias,id',
+        try{
+        $request->validate([
+            'idEstudiante' => 'required|exists:users,usId',
+            'idMateria' => 'required|exists:materias,matId',
+            'insCicloLectivo' => 'required|string|max:10',
+            'insEstado' => 'required|string|max:20',
         ]);
-        Inscripcion::create($data);
+
+        $inscripcion = Inscripcion::create([
+            'idEstudiante' => $request->idEstudiante,
+            'idMateria' => $request->idMateria,
+            'insCicloLectivo' => $request->insCicloLectivo,
+            'insEstado' => $request->insEstado,
+        ]);
+
+            return response()->json([
+                'message' => 'Inscripción creada correctamente',
+                'data' => $inscripcion
+            ], 201);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'message' => 'Datos enviados no válidos',
+                'errors' => $e->validator->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error al crear la inscripción',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
@@ -48,9 +85,30 @@ class InscripcionController extends Controller
      * @param  \App\Models\Inscripcion  $inscripcion
      * @return \Illuminate\Http\Response
      */
+    /**
+     * $id???
+     * @param \App\Models\Inscripcion $inscripcion
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function show(Inscripcion $inscripcion)
     {
-        //
+        try {
+            $inscripcion = Inscripcion::with(['estudiante', 'materia'])->findOrFail($inscripcion->id);
+
+            return response()->json([
+                'message' => 'Inscripción encontrada',
+                'data' => $inscripcion
+            ], 200);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json([
+                'message' => 'Inscripción no encontrada'
+            ], 404);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error al buscar la inscripción',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
@@ -71,19 +129,64 @@ class InscripcionController extends Controller
      * @param  \App\Models\Inscripcion  $inscripcion
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Inscripcion $inscripcion)
+    public function update(Request $request, $id)
     {
-        //
-    }
+        try {
+            $request->validate([
+                'idEstudiante' => 'required|integer|exists:users,id',
+                'idMateria' => 'required|integer|exists:materias,id',
+                'insCicloLectivo' => 'required|string|max:20',
+                'insEstado' => 'required|string|max:50'
+            ]);
 
+            $inscripcion = Inscripcion::findOrFail($id);
+            $inscripcion->update($request->all());
+
+            return response()->json([
+                'message' => 'Inscripción actualizada correctamente',
+                'data' => $inscripcion
+            ], 200);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'message' => 'Datos enviados no válidos',
+                'errors' => $e->validator->errors()
+            ], 422);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json([
+                'message' => 'Inscripción no encontrada'
+            ], 404);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error al actualizar la inscripción',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
     /**
      * Remove the specified resource from storage.
      *
      * @param  \App\Models\Inscripcion  $inscripcion
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Inscripcion $inscripcion)
+    public function destroy($id)
     {
-        //
+        try {
+            $inscripcion = Inscripcion::findOrFail($id);
+            $inscripcion->delete();
+
+            return response()->json([
+                'message' => 'Inscripción eliminada correctamente'
+            ], 200);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json([
+                'message' => 'Inscripción no encontrada'
+            ], 404);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error al eliminar la inscripción',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 }
+

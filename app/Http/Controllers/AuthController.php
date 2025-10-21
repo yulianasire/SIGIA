@@ -21,6 +21,7 @@ class AuthController extends Controller
                 'usNombre' => 'required|string',
                 'usTelefono' => 'required|string',
                 'usDomicilio' => 'required|string',
+                'usProvincia' => 'required|string',
                 'usLocalidad' => 'required|string',
             ]);
 
@@ -34,6 +35,7 @@ class AuthController extends Controller
                 'usNombre' => $request->usNombre,
                 'usTelefono' => $request->usTelefono,
                 'usDomicilio' => $request->usDomicilio,
+                'usProvincia' => $request->usProvincia,
                 'usLocalidad' => $request->usLocalidad,
                 'usMail' => $request->usMail,
                 'usPassword' => Hash::make($request->usPassword),
@@ -83,6 +85,7 @@ class AuthController extends Controller
                 'usNombre' =>  $user->usNombre,
                 'usTelefono' => $user->usTelefono,
                 'usDomicilio' => $user->usDomicilio,
+                'usProvincia' => $user->usProvincia,
                 'usLocalidad' => $user->usLocalidad,
                 'usMail' => $user->usMail,
                 'email_verified_at' => $user->email_verified_at,
@@ -95,8 +98,15 @@ class AuthController extends Controller
 
     public function logout(Request $request)
     {
-        $request->user()->tokens()->delete();
-        return response()->json(['message' => 'Sesión cerrada correctamente']);
+        if (!$request->user()){
+            return response()->json(['error'=> 'No autenticado'], 401);
+        }
 
+        if (!$request->user()->hasRole('administrador')) {
+            return response()->json(['error' => 'No autorizado'], 403);
+        }
+
+        $request->user()->tokens()->delete();
+        return response()->json(['message' => 'Sesión cerrada correctamente']);        
     }
 }

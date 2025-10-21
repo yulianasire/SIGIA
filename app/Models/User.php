@@ -26,6 +26,7 @@ class User extends Authenticatable
         'usNombre',
         'usTelefono',
         'usDomicilio',
+        'usProvincia',
         'usLocalidad',
     ];
 
@@ -53,7 +54,6 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
-     // ⚠️ Importante: sobreescribir para que Auth use usPassword
     public function getAuthPassword()
     {
         return $this->usPassword;

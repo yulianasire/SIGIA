@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('usNombre', 100);
             $table->string('usTelefono', 20);
             $table->string('usDomicilio', 200);
+            $table->string('usProvincia', 100);
             $table->string('usLocalidad');
 
             $table->rememberToken();

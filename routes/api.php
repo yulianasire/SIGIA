@@ -8,51 +8,63 @@ use App\Http\Controllers\MateriaController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/saludo', function (Request $request) {
-    return response()->json(['mensaje' => 'Hola Mundo']);
-});
 
+// Public Routes (No authentication required)
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
-Route::get('/login', [AuthController::class, 'login']);
-
-
 // Authenticated Routes (Requires Sanctum token)
 Route::middleware('auth:sanctum')->group(function () {
-     Route::get('/user', function (Request $request) {
+    Route::get('/user', function (Request $request) {
         return $request->user();
     });
-
-    
-
     Route::post('/logout', [AuthController::class, 'logout']);
-     // Carrera Routes
-    Route::middleware('role:administrador')->group(function () {
-        Route::post('carreras', [CarreraController::class, 'store']);
-        Route::put('carreras/{id}', [CarreraController::class, 'update']);
-        Route::delete('carreras/{id}', [CarreraController::class, 'destroy']);
 
-        Route::post('materias', [MateriaController::class, 'store']);
-        Route::put('materias/{id}', [MateriaController::class, 'update']);
-        Route::delete('materias/{id}', [MateriaController::class, 'destroy']);
-        Route::get('/carrerasConMaterias', [CarreraController::class, 'showConMaterias']);
+    // Carrera Routes
+    Route::middleware('role:administrador')->group(function () {
+        Route::post('/carreras', [CarreraController::class, 'store']);
+        Route::put('/carreras/{carrera}', [CarreraController::class, 'update']);
+        Route::delete('/carreras/{carrera}', [CarreraController::class, 'destroy']);
+        Route::get('/carreras-con-materias', [CarreraController::class, 'CarrerasConMaterias']);
+        Route::get('/carreras-con-materias/{carrera}', [CarreraController::class, 'CarrerasConMaterias']);
+    });
+    Route::middleware('role:administrador|profesor|estudiante')->group(function () {
+        Route::get('/carreras', [CarreraController::class, 'index']);
+        Route::get('/carreras/{carrera}', [CarreraController::class, 'show']);
+    });
+    
+    // Materia Routes
+    Route::middleware('role:administrador')->group(function () {
+        Route::post('/materias', [MateriaController::class, 'store']);
+        Route::put('/materias/{materia}', [MateriaController::class, 'update']);
+        Route::delete('/materias/{materia}', [MateriaController::class, 'destroy']);
     });
 
     Route::middleware('role:administrador|profesor|estudiante')->group(function () {
-        // Rutas para Carreras
-        Route::get('carreras', [CarreraController::class, 'index']);
-        Route::get('carrerasWithUC', [CarreraController::class, 'showWithUC']);
-        //Route::get('/carreras/{id}', [CarrerasController::class, 'show']);
-
-
-        // Rutas para Unidades Curriculares
-        Route::get('materias', [MateriaController::class, 'index']);
-        
+        Route::get('/materias', [MateriaController::class, 'index']);
+        Route::get('/materias/{materia}', [MateriaController::class, 'show']);
     });
- 
+
+    // Asistencia Routes
+Route::middleware('role:administrador|profesor')->group(function () {
+    Route::get('/asistencias', [AsistenciaController::class, 'index']);
+    Route::get('/asistencias/{asistencia}', [AsistenciaController::class, 'show']);
+    Route::post('/asistencias', [AsistenciaController::class, 'store']);
+    Route::put('/asistencias/{asistencia}', [AsistenciaController::class, 'update']);
+    Route::delete('/asistencias/{asistencia}', [AsistenciaController::class, 'destroy']);
 });
 
+// Inscripción Routes
+Route::middleware('role:administrador|profesor|estudiante')->group(function () {
+    Route::get('/inscripciones', [InscripcionController::class, 'index']);
+    Route::get('/inscripciones/{inscripcion}', [InscripcionController::class, 'show']);
+    Route::post('/inscripciones', [InscripcionController::class, 'store']);
+    Route::put('/inscripciones/{inscripcion}', [InscripcionController::class, 'update']);
+    Route::delete('/inscripciones/{inscripcion}', [InscripcionController::class, 'destroy']);
+});
 
+});
+
+// Route::get('/saludo', function (Request $request) { return response()->json(['mensaje' => 'Hola Mundo']); });
 
 // Route::get('/carreras', [CarreraController::class, 'index']);
 

@@ -34,7 +34,8 @@ class RoleSeeder extends Seeder
                 'usApellido' => 'Admin',
                 'usTelefono'=> '3435612312',
                 'usDomicilio'=> 'Barrio Palomar',
-                'usLocalidad'=> 'Nogoyá, Entre Ríos',
+                'usProvincia'=> 'Entre Ríos',
+                'usLocalidad'=> 'Nogoyá',
                 'usPassword' => Hash::make('password'), // Cambia 'password' por una contraseña segura
             ]
         );
@@ -49,7 +50,8 @@ class RoleSeeder extends Seeder
                 'usApellido' => 'Profesor',
                 'usTelefono'=> '3435612312',
                 'usDomicilio'=> 'Barrio Palomar',
-                'usLocalidad'=> 'Nogoyá, Entre Ríos',
+                'usProvincia'=> 'Entre Ríos',
+                'usLocalidad'=> 'Nogoyá ',
                 'usPassword' => Hash::make('38123123'),
             ]
         );
@@ -64,7 +66,8 @@ class RoleSeeder extends Seeder
                 'usApellido' => 'Estudiante',
                 'usTelefono'=> '3435612312',
                 'usDomicilio'=> 'Barrio Palomar',
-                'usLocalidad'=> 'Nogoyá, Entre Ríos',
+                'usProvincia'=> 'Entre Ríos',
+                'usLocalidad'=> 'Nogoyá',
                 'usPassword' => Hash::make('38123123'),
             ]
         );
