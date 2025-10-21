@@ -71,6 +71,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/mis-inscripciones', [InscripcionController::class, 'misInscripciones']);
         // Inscribirse a una materia
         Route::post('/inscripciones', [InscripcionController::class, 'store']);
+         Route::get('/mis-asistencias', [AsistenciaController::class, 'misAsistencias']);
     });
 });
 

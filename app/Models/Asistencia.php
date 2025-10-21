@@ -11,10 +11,16 @@ class Asistencia extends Model
     protected $primaryKey = 'asisId';
     protected $fillable = ['idEstudiantes', 'asisFecha', 'asisEstado', 'asisFalta', 'idInscripcion'];
 
-    public function estudiante() {
-        return $this->belongsTo(User::class, 'idEstudiante');
+    public function estudiante()
+    {
+        return $this->belongsTo(User::class, 'idEstudiante', 'usId');
     }
-    public function inscripcion(){
+    public function materia()
+    {
+        return $this->belongsTo(Materia::class, 'idMateria', 'matId');
+    }
+    public function inscripcion()
+    {
         return $this->belongsTo(Inscripcion::class, 'idInscripcion');
     }
 }
