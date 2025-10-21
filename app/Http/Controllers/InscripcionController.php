@@ -3,7 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Inscripcion;
-use Dotenv\Exception\ValidationException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Validation\ValidationException;
 use Illuminate\Http\Request;
 
 class InscripcionController extends Controller
@@ -99,7 +100,7 @@ class InscripcionController extends Controller
                 'message' => 'Inscripción encontrada',
                 'data' => $inscripcion
             ], 200);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+        } catch (ModelNotFoundException $e) {
             return response()->json([
                 'message' => 'Inscripción no encontrada'
             ], 404);
@@ -151,7 +152,7 @@ class InscripcionController extends Controller
                 'message' => 'Datos enviados no válidos',
                 'errors' => $e->validator->errors()
             ], 422);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+        } catch (ModelNotFoundException $e) {
             return response()->json([
                 'message' => 'Inscripción no encontrada'
             ], 404);
@@ -177,7 +178,7 @@ class InscripcionController extends Controller
             return response()->json([
                 'message' => 'Inscripción eliminada correctamente'
             ], 200);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+        } catch (ModelNotFoundException $e) {
             return response()->json([
                 'message' => 'Inscripción no encontrada'
             ], 404);
@@ -188,5 +189,25 @@ class InscripcionController extends Controller
             ], 500);
         }
     }
-}
 
+    public function misInscripciones(Request $request)
+{
+    try {
+        $userId = $request->user()->usId; // ID del usuario autenticado
+        $inscripciones = Inscripcion::with(['materia'])
+            ->where('idEstudiante', $userId)
+            ->get();
+
+        return response()->json([
+            'message' => 'Inscripciones del estudiante autenticado obtenidas correctamente.',
+            'data' => $inscripciones
+        ], 200);
+
+    } catch (\Exception $e) {
+        return response()->json([
+            'message' => 'Error al obtener las inscripciones del estudiante.',
+            'error' => $e->getMessage()
+        ], 500);
+    }
+}
+}
